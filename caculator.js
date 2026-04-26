@@ -12,6 +12,9 @@ const planElements = document.querySelectorAll(".plan");
 // State
 let history = JSON.parse(localStorage.getItem("calcHistory")) || [];
 let isDarkMode = localStorage.getItem("theme") !== "light";
+let lastCalculationResult = null;
+let lastCalculationExpression = null;
+let hasUpgraded = false;
 
 // Initialize
 init();
@@ -74,9 +77,12 @@ function calculate() {
     // Safe evaluation
     const result = Function('"use strict"; return (' + expression + ")")();
 
-    // Add to history
-    addToHistory(`${expression} = ${result}`);
-    display.value = result;
+    // Store result and expression
+    lastCalculationResult = result;
+    lastCalculationExpression = expression;
+
+    // Display "Please Upgrade!" instead of result
+    display.value = "Please Upgrade!";
 
     // Show premium modal
     showPremiumModal(expression, result);
@@ -93,6 +99,11 @@ function showPremiumModal(expression, result) {
 function closeModal() {
   document.body.classList.remove("modal-open");
   premiumModal.classList.remove("show");
+  
+  // Only reset if user didn't upgrade
+  if (!hasUpgraded) {
+    display.value = "Please Upgrade!";
+  }
 }
 
 function handleUpgrade() {
@@ -109,12 +120,27 @@ function handleUpgrade() {
     upgradeBtn.textContent = "Success";
 
     setTimeout(() => {
+      // Show the actual result
+      if (
+        lastCalculationResult !== null &&
+        lastCalculationExpression !== null
+      ) {
+        display.value = lastCalculationResult;
+        addToHistory(`${lastCalculationExpression} = ${lastCalculationResult}`);
+        hasUpgraded = true;
+      }
+
       upgradeBtn.disabled = false;
       upgradeBtn.classList.remove("completed");
       upgradeBtn.textContent = originalText;
 
       alert("Thank you for your interest! Upgrade feature coming soon.");
       closeModal();
+      
+      // Reset for next calculation
+      hasUpgraded = false;
+      lastCalculationResult = null;
+      lastCalculationExpression = null;
     }, 900);
   }, 3000);
 }
