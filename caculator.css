@@ -191,6 +191,27 @@ body.modal-open .modal {
 .zero {
   grid-column: span 2;
 }
+.des {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+  line-height: none;
+}
+.des a {
+  font-style: italic;
+  margin-left: 5px;
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+  line-height: none;
+  color: var(--operator-color);
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+}
 
 .history {
   background: var(--secondary-bg);
